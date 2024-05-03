@@ -43,17 +43,21 @@ class   SuppliersWindow(tk.Toplevel):
                 global count 
                 count=0
                 for record in records :
+                    supplier_id = record[0]
+                    address = suppliers_crud.get_address(supplier_id)  
+                     # Combine supplier data and address for Treeview insertion
+                    full_data = record + (address,)
                     if count % 2 == 0 :                                             
-                        my_tree.insert(parent='',index='end' , iid=count,text="",values=(record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7]), tags=('evenrow',))
+                        my_tree.insert(parent='',index='end' , iid=count,text="",values=full_data, tags=('evenrow',))
                     else :
-                        my_tree.insert(parent='',index='end' ,iid=count,text="",values=(record[0],record[1],record[2],record[3],record[4],record[5],record[6],record[7]), tags=('oddrow',))
+                        my_tree.insert(parent='',index='end' ,iid=count,text="",values=full_data, tags=('oddrow',))
                     count += 1
         #configure the scrollbar
 
         tree_scroll.config(command=my_tree.yview)
 
         #define our columns      
-        my_tree['columns'] = ("Supplier id","Full name", "Contact person", "Contact number", "Email", "Address", "City", "Country")
+        my_tree['columns'] = ("Supplier id","Full name", "Contact person", "Contact number", "Email", "Address")
 
         #format our columns 
         my_tree.column("#0" , width=0 , stretch =NO)
@@ -63,9 +67,7 @@ class   SuppliersWindow(tk.Toplevel):
         my_tree.column("Contact number" , anchor=W , width=140 )
         my_tree.column("Email" , anchor=W , width=140 )
         my_tree.column("Address" , anchor=W , width=140 )
-        my_tree.column("City" , anchor=W , width=140 )
-        my_tree.column("Country" , anchor=W , width=140 )
-
+      
         #create headings 
 
         my_tree.heading("#0",text="" , anchor=W)
@@ -75,8 +77,7 @@ class   SuppliersWindow(tk.Toplevel):
         my_tree.heading("Contact number" ,text="Contact number" , anchor=W)
         my_tree.heading("Email",text="Email" , anchor=W)
         my_tree.heading("Address" ,text="Address" , anchor=W)
-        my_tree.heading("City" ,text="City", anchor=W)
-        my_tree.heading("Country" ,text="Country" , anchor=W)
+   
 
         #create striped row tags 
 
@@ -120,39 +121,40 @@ class   SuppliersWindow(tk.Toplevel):
 
             # Create a map widget
             map_widget = tkintermapview.TkinterMapView(map_window, width=700, height=700, corner_radius=0)
-            map_widget.set_address("bejaia")
+            
             map_widget.set_zoom(15)
             map_widget.pack()
+         
 
+  
+            map_widget.set_address("algeria")
             # Function to handle location selection
-            def set_address(coords):
-                # Update address entry in SuppliersWindow
-                adr = tkintermapview.convert_coordinates_to_address(coords[0],coords[1])
-                clean_address = adr.address +" coordinates : "+str(coords)
-                print(clean_address)
-                address_entry.delete(0, END)
-                address_entry.insert(0, clean_address)
+            def put_address(coords):
+    # Retrieve address from coordinates
+                adr = tkintermapview.convert_coordinates_to_address(coords[0], coords[1])
 
-                # Close the map window
-                map_window.destroy()
+                # Check if address is retrieved successfully
+                if adr is not None:
+                    # Construct the clean address string
+                    clean_address = adr.address + " coordinates: " + str(coords)
+                    print(clean_address)
+                    address_entry.delete(0, END)
+                    address_entry.insert(0, clean_address)
+                    map_window.destroy()
+                else:
+                    # Handle the case where address retrieval failed
+                    messagebox.showerror("Error", "Failed to retrieve address from coordinates")
+                
+
 
 
             map_widget.add_right_click_menu_command(label="get location",
-                                        command=set_address,
+                                        command=put_address,
                                         pass_coords=True)
         select_location_button = Button(data_frame, text="Map Location", command=lambda: select_location(self))
         select_location_button.grid(row=1, column=4, padx=10, pady=10)
 
-        city_label =Label(data_frame,text="City")
-        city_label.grid(row=1,column=4,padx=10 ,pady=10)
-        city_entry =Entry(data_frame)
-        city_entry.grid(row=1,column=5,padx=10 ,pady=10)
-
-        country_label =Label(data_frame,text="Country")
-        country_label.grid(row=2,column=0,padx=10 ,pady=10)
-        country_entry =Entry(data_frame)
-        country_entry.grid(row=2,column=1,padx=10 ,pady=10)
-      
+    
 
         supplier_id_label = Label(data_frame, text="Supplier id")
         supplier_id_label.grid(row=2, column=2, padx=10, pady=10)
@@ -199,8 +201,7 @@ class   SuppliersWindow(tk.Toplevel):
             id_entry.delete(0,END)
             cn_entry.delete(0,END)
             address_entry.delete(0,END)
-            city_entry.delete(0,END)
-            country_entry.delete(0,END)
+            supplier_id_entry.delete(0,END)
 
         #select record 
         def select_record(e) : 
@@ -211,25 +212,22 @@ class   SuppliersWindow(tk.Toplevel):
             id_entry.delete(0,END)
             cn_entry.delete(0,END)
             address_entry.delete(0,END)
-            city_entry.delete(0,END)
-            country_entry.delete(0,END)
            
 
             #grab record number
             selected = my_tree.focus()
             #grab record values 
             values=my_tree.item(selected,'values')
-
+            print(values)
             #output entry boxes 
-            supplier_id_entry.insert(0,values[0])
-            fn_entry.insert(0,values[1])
-            ln_entry.insert(0,values[2])
-            id_entry.insert(0,values[3])
-            cn_entry.insert(0,values[4])
-            address_entry.insert(0,values[5])
-            city_entry.insert(0,values[6])
-            country_entry.insert(0,values[7])
-        
+            if values :
+                supplier_id_entry.insert(0,values[0])
+                fn_entry.insert(0,values[1])
+                ln_entry.insert(0,values[2])
+                id_entry.insert(0,values[3])
+                cn_entry.insert(0,values[4])
+                address_entry.insert(0,values[5])
+          
 
         def create_supplier(): 
             first_name = fn_entry.get()
@@ -237,17 +235,16 @@ class   SuppliersWindow(tk.Toplevel):
             email = id_entry.get()
             contact_number = cn_entry.get()
             address = address_entry.get()
-            city = city_entry.get()
-            country = country_entry.get()
+         
               
-            suppliers_crud.create_supplier(first_name, last_name, email, contact_number, address, city, country)
+            suppliers_crud.create_supplier(first_name, last_name, email, contact_number, address)
             fn_entry.delete(0,END)
             ln_entry.delete(0,END)
             id_entry.delete(0,END)
             cn_entry.delete(0,END)
             address_entry.delete(0,END)
-            city_entry.delete(0,END)
-            country_entry.delete(0,END)
+            supplier_id_entry.delete(0,END)
+            
         
              # Clear The Treeview Table
             my_tree.delete(*my_tree.get_children())
@@ -265,19 +262,17 @@ class   SuppliersWindow(tk.Toplevel):
             email = id_entry.get()
             contact_number = cn_entry.get()
             address = address_entry.get()
-            city = city_entry.get()
-            country = country_entry.get()
+           
 
             # Call the logic function to update the database
-            suppliers_crud.update_supplier(supplier_id, first_name, last_name, email, contact_number, address, city, country)
+            suppliers_crud.update_supplier(supplier_id, first_name, last_name, email, contact_number, address)
             supplier_id_entry.delete(0,END)
             fn_entry.delete(0,END)
             ln_entry.delete(0,END)
             id_entry.delete(0,END)
             cn_entry.delete(0,END)
             address_entry.delete(0,END)
-            city_entry.delete(0,END)
-            country_entry.delete(0,END)
+            
 
             my_tree.delete(*my_tree.get_children())
             load_suppliers(self)

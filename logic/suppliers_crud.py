@@ -1,14 +1,23 @@
 from .mysql_database import connect_to_mysql
 from tkinter import ttk, messagebox
-def create_supplier(name, contact_person, contact_number, email, address, city, country):
+from .mongodb_database import store_supplier_location,update_supplier_address,get_supplier_address
+
+
+def create_supplier(name, contact_person, contact_number, email, address):
     conn = connect_to_mysql()
     cursor = conn.cursor()
 
-    query = '''INSERT INTO Suppliers (name, contact_person, contact_number, email, address, city, country)
-               VALUES (%s, %s, %s, %s, %s, %s, %s)'''
-    values = (name, contact_person, contact_number, email, address, city, country)
+    query = '''INSERT INTO Suppliers (name, contact_person, contact_number, email)
+               VALUES (%s, %s, %s, %s)'''
+    values = (name, contact_person, contact_number, email)
 
     cursor.execute(query, values)
+    # Get the newly created supplier ID from MySQL
+    cursor.execute("SELECT LAST_INSERT_ID()")
+    supplier_id = cursor.fetchone()[0]
+
+    # Store address in MongoDB using supplier ID
+    store_supplier_location(supplier_id, address)
     conn.commit()
     conn.close()
 
@@ -23,21 +32,23 @@ def get_suppliers():
     conn.close()
     return supplier
 
-def update_supplier(supplier_id, name, contact_person, contact_number, email, address, city, country):
+def update_supplier(supplier_id, name, contact_person, contact_number, email,address):
     conn = connect_to_mysql()
     cursor = conn.cursor()
 
     query = '''UPDATE Suppliers 
-               SET name = %s, contact_person = %s, contact_number = %s, email = %s, 
-                   address = %s, city = %s, country = %s 
+               SET name = %s, contact_person = %s, contact_number = %s, email = %s
                WHERE supplier_id = %s'''
-    values = (name, contact_person, contact_number, email, address, city, country, supplier_id)
+    values = (name, contact_person, contact_number, email, supplier_id)
+    update_supplier_address(supplier_id ,address)
 
     cursor.execute(query, values)
     conn.commit()
     conn.close()
 
 
+def get_address(supplier_id):
+    return get_supplier_address(supplier_id)
 
 def has_inventory_stock(supplier_id,conn):
   

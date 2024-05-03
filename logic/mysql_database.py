@@ -87,10 +87,6 @@ def create_inventory_items_table():
 
 
 
-
-
-# Function to create Order Items table
-
 def create_order_items_table():
     conn = connect_to_mysql()
     cursor = conn.cursor()
