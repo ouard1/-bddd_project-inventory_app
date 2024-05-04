@@ -4,9 +4,9 @@ import tkintermapview
 import sys 
 sys.path.append('../') 
 
-from ui import clients,suppliers
+import os
 from clients import ClientsWindow
-from tkinter import ttk, messagebox
+from tkinter import ttk, CENTER
 from suppliers import SuppliersWindow
 from inventoryItems import ItemsWindow
 from logic import analytics
@@ -17,57 +17,120 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from orders import OrdersWindow
-
+from customtkinter import CTk,CTkComboBox,CTkFrame,CTkButton,CTkLabel,CTkCanvas,CTkImage
+from PIL import Image,ImageTk
 
 #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
-class MainWindow(tk.Tk):
+class MainWindow(CTk):
     def __init__(self):
         super().__init__()
 
         self.title("Main Window")
-        self.geometry("1000x500") 
+        self.geometry("1100x700") 
         style =ttk.Style()
         style.theme_use("default")
-        sidebar_frame = tk.Frame(self, bg="lightgrey", width=100)
-        sidebar_frame.pack(fill=tk.Y, side=tk.LEFT)
+        
+        
+        num_rows = 8
+        num_cols = 13
+        cell_size = 83  # Pixels
+
+        # Configure rows
+        for i in range(num_rows):
+            self.rowconfigure(i, weight=1, minsize=cell_size)
+
+        # Configure columns
+        for i in range(num_cols):
+            self.columnconfigure(i, weight=1, minsize=cell_size)
 
 # Buttons on the sidebar
-        suppliers_button = tk.Button(sidebar_frame, text="Suppliers", command=self.show_suppliers)
-        suppliers_button.pack(pady=10)
+        sidebar_frame =  CTkFrame(self, fg_color="#6665DD")
+        sidebar_frame.grid(column=0,columnspan=2,row=0,rowspan=12,sticky='nsew')
 
-        clients_button = tk.Button(sidebar_frame, text="Clients", command=self.show_clients)
-        clients_button.pack(pady=10)
-
-        items_button = tk.Button(sidebar_frame, text="Inventory Items", command=self.show_items)
-        items_button.pack(pady=10)
-        orders_button = tk.Button(sidebar_frame, text=" Orders", command=self.show_orders)
-        orders_button.pack(pady=10)
-
-
-        content_frame = tk.Frame(self)
-        content_frame.pack(fill=tk.BOTH, expand=True)
-
-       
-       
-
-       
-
-# Analytics frame
-        analytics_frame = tk.Frame(content_frame, bg="lightblue", relief=tk.RAISED, bd=2)
-        analytics_frame.grid(row=0, column=0, padx=20, pady=20)
-
+      
         
 
-        # Title for analytics
-        analytics_title_label = tk.Label(analytics_frame, text="Top Selling Items", font=("Arial", 14, "bold"))
-        analytics_title_label.grid(pady=10)
+        header_frame =  CTkFrame(self,fg_color="#FAFAFF")
+        header_frame.grid(column=2,columnspan=11,row=0,sticky='nsew')
+        home_label = CTkLabel(
+         header_frame, text="Home", font=("Arial", 25, "bold"),fg_color='#FAFAFF')
+        home_label.pack(side='left',ipadx=30)
 
-        # Fetch top-selling items data
-        top_selling_items = analytics.calculate_top_selling_items()
+        supplier_image = ImageTk.PhotoImage(Image.open("C:/Users/ouarda/Desktop/bddd projet/inventory management system/ui/Image (3).png").resize((20,20)))
+        orders_image =ImageTk.PhotoImage(Image.open("C:/Users/ouarda/Desktop/bddd projet/inventory management system/ui/Image.png").resize((20,20)))
+        clients_image =ImageTk.PhotoImage(Image.open("C:/Users/ouarda/Desktop/bddd projet/inventory management system/ui/Image (5).png").resize((20,21)))
+        items_image =ImageTk.PhotoImage(Image.open("C:/Users/ouarda/Desktop/bddd projet/inventory management system/ui/Image (4).png").resize((20,20)))
+    
+        suppliers_button = CTkButton(sidebar_frame,image=supplier_image, text="Suppliers", command=self.show_suppliers,hover=False,text_color="#1C1C1C",fg_color='transparent',compound="left",width=83,corner_radius=0,anchor="w",border_spacing=8)
+        suppliers_button.grid(row=7 , column=0,columnspan=2,sticky='nsew',padx=40,pady=10)
+
+        clients_button = CTkButton(sidebar_frame, image=clients_image,text="Clients", command=self.show_clients,hover=False,text_color="#1C1C1C",fg_color='transparent',compound="left",width=83,anchor="w",border_spacing=8,corner_radius=0)
+        clients_button.grid(row=8 , column=0,columnspan=2,sticky='nsew',padx=40,pady=10)
+
+        items_button = CTkButton(sidebar_frame, text="Inventory", image=items_image,command=self.show_items,hover=False,text_color="#1C1C1C",fg_color='transparent',compound="left",width=83,corner_radius=0,anchor="w",border_spacing=8)
+        items_button.grid(row=9, column=0,columnspan=2,sticky='nsew',padx=40,pady=10)
+
+        orders_button = CTkButton(sidebar_frame, text=" Orders", image=orders_image,command=self.show_orders,hover=False,text_color="#1C1C1C",fg_color='transparent',compound="left",width=83,corner_radius=0,anchor="w",border_spacing=8)
+        orders_button.grid(row=10, column=0,columnspan=2,sticky='nsew',padx=40,pady=10)
+
+
+       
+       
+
+        num_rows = 2
+        num_cols = 2
+        cell_size = 400  # Pixels (adjust based on your desired frame size)
+        content_frame = CTkFrame(self, fg_color="#EAEAF4")
+        content_frame.grid(row=1, column=2, columnspan=11, rowspan=8, sticky='nsew')
+        for i in range(num_rows):
+            content_frame.grid_rowconfigure(i, weight=1)
+        for i in range(num_cols):
+            content_frame.grid_columnconfigure(i, weight=1)
+
+        # Create and position the 4 frames
+        padding = 10 # Adjust padding between frames as desired
+
+        analytics_frame = CTkFrame(content_frame, fg_color="#FAFAFF", corner_radius=16)
+        analytics_frame.grid(row=0, column=0, padx=padding, pady=padding, sticky="nsew")
+        sales_performance_frame = CTkFrame(content_frame, fg_color="#FAFAFF", corner_radius=16)
+        sales_performance_frame.grid(row=0, column=1, columnspan= 2,padx=padding, pady=padding, sticky="nsew")
+        map_frame = CTkFrame(content_frame, fg_color="#FAFAFF", corner_radius=16)
+        map_frame.grid(row=1, column=0, columnspan=2, padx=padding, pady=padding, sticky="nsew")
+        low_stock_frame = CTkFrame(content_frame, fg_color="#FAFAFF", corner_radius=16)
+        low_stock_frame.grid(row=1, column=2, columnspan=1, padx=padding, pady=padding, sticky="nsew")
+
+
+        
 
         def convert_decimal_to_float(item):
             return {'item_name': item['item_name'], 'total_quantity': float(item['total_quantity'])}
 
+        
+
+      
+
+       
+        analytics_title_label = CTkLabel(analytics_frame, text="Top Selling Items")
+        analytics_title_label.grid(pady=5)
+
+        top_selling_items = analytics.calculate_top_selling_items()
+
+        item_names = [item['item_name'] for item in top_selling_items]
+        total_quantities = [item['total_quantity'] for item in top_selling_items]
+
+        fig = Figure(figsize=(5, 3),facecolor="#FAFAFF")
+        ax = fig.add_subplot(111)
+        colors = ["#EAEAF4", "#6665DD", "#119DA4", "#230C33", "black", "white"]
+        
+        def autopct_format(value):
+            return f'{value:.1f}%'
+
+        ax.pie(total_quantities, labels=item_names, autopct=autopct_format, startangle=140, colors=colors, pctdistance=1.5)
+        ax.axis('equal')
+
+        canvas = FigureCanvasTkAgg(fig, master=analytics_frame)
+        canvas.draw()
+        canvas.get_tk_widget().grid(sticky="nsew")
         def mongodb_store_analytics(top_selling_items):
             top_selling_items = [convert_decimal_to_float(item) for item in top_selling_items]
 
@@ -81,36 +144,10 @@ class MainWindow(tk.Tk):
 
         mongodb_store_analytics(top_selling_items)
 
-        # Create a matplotlib figure
-        fig = Figure(figsize=(4, 2))
-
-        # Add subplot to the figure
-        ax = fig.add_subplot(111)
-
-        # Extract item names and total quantities from fetched data
-        item_names = [item['item_name'] for item in top_selling_items]
-        total_quantities = [item['total_quantity'] for item in top_selling_items]
-
-        # Create a bar chart
-        ax.bar(item_names, total_quantities, color='skyblue')
-
-        # Set labels and title for the chart
-        ax.set_xlabel('Items')
-        ax.set_ylabel('Total Quantity')
-        ax.set_title('Top Selling Items')
-
-        # Embed the plot into a Tkinter canvas
-        canvas = FigureCanvasTkAgg(fig, master=analytics_frame)
-        canvas.draw()
-        canvas.get_tk_widget().grid()
-
-        sales_performance_frame = tk.Frame(content_frame, bg="lightblue", relief=tk.RAISED, bd=2)
-        sales_performance_frame.grid(row=0, column=1, padx=20, pady=20)
-
         # Title for sales performance
-        sales_performance_title_label = tk.Label(sales_performance_frame, text="Sales Performance",
-                                                  font=("Arial", 14, "bold"))
-        sales_performance_title_label.grid(pady=10)
+        sales_performance_title_label = CTkLabel(sales_performance_frame, text="Sales Performance",
+                                                  font=("Arial", 14, "bold"),)
+        sales_performance_title_label.grid()
 
         # Define the desired period (e.g., last 7 days)
         end_date = datetime.now()
@@ -122,9 +159,9 @@ class MainWindow(tk.Tk):
         revenue = [order['total_revenue'] for order in orders_data]
 
         # Visualize sales trends
-        fig_sales = Figure(figsize=(4, 2))
+        fig_sales = Figure(figsize=(5, 3),facecolor="#FAFAFF")
         ax_sales = fig_sales.add_subplot(111)
-        ax_sales.plot(dates, revenue, marker='o', color='skyblue')
+        ax_sales.plot(dates, revenue, marker='o', color='#230C33')
         ax_sales.set_xlabel('Date')
         ax_sales.set_ylabel('Total Sales Revenue')
         ax_sales.set_title('Sales Trends')
@@ -134,16 +171,13 @@ class MainWindow(tk.Tk):
         # Embed the plot into a Tkinter canvas
         canvas_sales = FigureCanvasTkAgg(fig_sales, master=sales_performance_frame)
         canvas_sales.draw()
-        canvas_sales.get_tk_widget().grid()
-        # Map frame
-        map_frame = tk.Frame(content_frame, bg="lightblue", relief=tk.RAISED, bd=2)
-        map_frame.grid(row=1, columnspan=2, padx=40, pady=20)
-
+        canvas_sales.get_tk_widget().grid(sticky="nsew")
+        
         # Add a map widget
-        map_widget = tkintermapview.TkinterMapView(map_frame, width=600, height=300)
+        map_widget = tkintermapview.TkinterMapView(map_frame, width=570, height=360,corner_radius=16)
         map_widget.set_address("algeria")
         map_widget.set_zoom(3)
-        map_widget.pack()
+        map_widget.pack(side="left")
 
         # Function to add markers to the map
         def add_markers_to_map():
@@ -158,19 +192,17 @@ class MainWindow(tk.Tk):
         # Call the function to add markers to the map
         add_markers_to_map()
         
-        
-        # Low Stock Items frame
-        low_stock_frame = tk.Frame(content_frame, bg="lightblue", relief=tk.RAISED, bd=2)
-        low_stock_frame.grid(row=2, columnspan=2, padx=40, pady=20)
 
         # Title for low stock items
-        low_stock_title_label = tk.Label(low_stock_frame, text="Low Stock Items",
+        low_stock_title_label = CTkLabel(low_stock_frame, text="Low Stock Items",
                                          font=("Arial", 14, "bold"))
         low_stock_title_label.grid(pady=10)
 
         # Create a Listbox for displaying low stock items
-        low_stock_listbox = tk.Listbox(low_stock_frame, width=50, height=10)
-        low_stock_listbox.grid()
+     
+        low_stock_listbox = tk.Listbox(low_stock_frame, width=86, height=10,bg="#FAFAFF",highlightcolor= "#6665DD")
+        low_stock_listbox.grid(row=1, column=0, padx=20, pady=(0, 20), sticky="nsew")  # Adjust padding and alignment
+
 
         # Function to populate low stock items in the Listbox
         def populate_low_stock_items():
