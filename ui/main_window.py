@@ -109,8 +109,7 @@ class MainWindow(CTk):
 
       
 
-       
-        analytics_title_label = CTkLabel(analytics_frame, text="Top Selling Items")
+        analytics_title_label = CTkLabel(analytics_frame, text="Top Selling Items",font=("Arial", 14, "bold"))
         analytics_title_label.grid(pady=5)
 
         top_selling_items = analytics.calculate_top_selling_items()
@@ -159,7 +158,7 @@ class MainWindow(CTk):
         revenue = [order['total_revenue'] for order in orders_data]
 
         # Visualize sales trends
-        fig_sales = Figure(figsize=(5, 3),facecolor="#FAFAFF")
+        fig_sales = Figure(figsize=(5, 3),facecolor="#FAFAFF",layout="tight")
         ax_sales = fig_sales.add_subplot(111)
         ax_sales.plot(dates, revenue, marker='o', color='#230C33')
         ax_sales.set_xlabel('Date')
@@ -171,13 +170,13 @@ class MainWindow(CTk):
         # Embed the plot into a Tkinter canvas
         canvas_sales = FigureCanvasTkAgg(fig_sales, master=sales_performance_frame)
         canvas_sales.draw()
-        canvas_sales.get_tk_widget().grid(sticky="nsew")
+        canvas_sales.get_tk_widget().grid(pady=10)
         
         # Add a map widget
-        map_widget = tkintermapview.TkinterMapView(map_frame, width=570, height=360,corner_radius=16)
+        map_widget = tkintermapview.TkinterMapView(map_frame, width=540, height=366,corner_radius=16)
         map_widget.set_address("algeria")
         map_widget.set_zoom(3)
-        map_widget.pack(side="left")
+        map_widget.pack(side="left",pady=3)
 
         # Function to add markers to the map
         def add_markers_to_map():
@@ -236,7 +235,6 @@ class MainWindow(CTk):
     def show_orders(self):
         orders= OrdersWindow(self)  # Pass self as the master
         orders.title("Orders")
-        orders.geometry("1000x500")
         orders.grab_set()
 
 if __name__ == "__main__":

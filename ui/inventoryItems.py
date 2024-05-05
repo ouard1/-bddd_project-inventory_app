@@ -13,10 +13,10 @@ class ItemsWindow(tk.Toplevel):
         style = ttk.Style()
         style.theme_use("default")
         style.configure("Treeview",
-                        background="#D3D3D3",
+                        background="#EAEAF4",
                         foreground="black",
                         rowheight=25,
-                        fieldbackground="#D3D3D3",
+                        fieldbackground="#EAEAF4",
                         show="headings"
                         )
         style.map('Treeview', background=[('selected', '#347083')])

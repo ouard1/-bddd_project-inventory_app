@@ -8,45 +8,61 @@ class OrdersWindow(tk.Toplevel):
     def __init__(self, master):  
         super().__init__(master)
         self.title("Orders")
-        self.geometry("400x300")
+        
+        window_width = 550
+        window_height = 300
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        x = (screen_width // 2) - (window_width // 2)
+        y = (screen_height // 2) - (window_height // 2)
+        self.geometry(f"{window_width}x{window_height}+{x}+{y}")
+        self.configure(background="#EAEAF4")
+
+        # Create a frame for the content
+        content_frame= tk.Frame(self, bg="#fafaff")
+        content_frame.pack(padx=20, pady=20, fill="both", expand=True)
+
         customer_names = orders_crud.get_customer_names()
-        customer_name_combo = ttk.Combobox(self, values=customer_names)
-        customer_name_label = Label(self, text="Customer Name:")
-        customer_name_combo.grid(row=0, column=1)
-        customer_name_label.grid(row=0, column=0)
+        customer_name_combo = ttk.Combobox(content_frame, values=customer_names)
+        customer_name_label = Label(content_frame, text="Customer Name:",anchor="w",background="#fafaff")
+        customer_name_combo.grid(row=0, column=1 , sticky="ew",pady=10,padx=7)
+        customer_name_label.grid(row=0, column=0 ,pady=10,padx=20,sticky="ew")
 
-        order_date_label = Label(self, text="Order Date (YYYY-MM-DD):")
-        order_date_entry = Entry(self)
-        order_date_label.grid(row=1, column=0)
-        order_date_entry.grid(row=1, column=1)
+        order_date_label = Label(content_frame, text="Order Date (YYYY-MM-DD):",anchor="w",background="#fafaff")
+        order_date_entry = Entry(content_frame)
+        order_date_label.grid(row=1, column=0,pady=4,padx=20,sticky="ew")
+        order_date_entry.grid(row=1, column=1 ,pady=4,padx=7,sticky="ew")
 
-        status_label = Label(self, text="Status:")
-        status_var = StringVar(self)
-        status_var.set("placed")  # Default status
+        status_label = Label(content_frame, text="Status:",anchor="w",background="#fafaff")
+        status_var = StringVar(content_frame)
+        status_var.set("select status")  # Default status
         status_options = ['placed', 'fulfilled', 'canceled']
-        status_menu = OptionMenu(self, status_var, *status_options)
-        status_label.grid(row=2, column=0)
-        status_menu.grid(row=2, column=1)
+        status_menu = OptionMenu(content_frame, status_var, *status_options)
+        status_menu.configure(background="#EAEAF4", activebackground="#EAEAF4")
+        status_label.grid(row=2, column=0,pady=4,padx=20,sticky="ew")
+        status_menu.grid(row=2, column=1 ,pady=4,padx=7,sticky="ew")
 
         products = orders_crud.get_products()
 
         # Product selection
-        product_label = Label(self, text="Product:")
-        product_var = StringVar(self)
-        product_menu = OptionMenu(self, product_var, *products)
-        product_label.grid(row=3, column=0)
-        product_menu.grid(row=3, column=1)
+        product_label = Label(content_frame, text="Product:",anchor="w",background="#fafaff")
+        product_var = StringVar(content_frame)
+        product_var.set("select product")
+        product_menu = OptionMenu(content_frame, product_var, *products)
+        product_menu.configure(background="#EAEAF4",activebackground="#EAEAF4")
+        product_label.grid(row=3, column=0,pady=4,padx=20,sticky="ew")
+        product_menu.grid(row=3, column=1 ,pady=4,padx=7,sticky="ew")
 
         # Quantity entry
-        quantity_label = Label(self, text="Quantity:")
-        quantity_entry = Entry(self)
-        quantity_label.grid(row=4, column=0)
-        quantity_entry.grid(row=4, column=1)
+        quantity_label = Label(content_frame, text="Quantity:",anchor="w",background="#fafaff")
+        quantity_entry = Entry(content_frame)
+        quantity_label.grid(row=4, column=0,pady=4,padx=20,sticky="ew")
+        quantity_entry.grid(row=4, column=1 ,pady=4,padx=7,sticky="ew")
         
         order_items = []
 
-        item_listbox = Listbox(self)
-        item_listbox.grid(row=0, column=6, columnspan=2)
+        item_listbox = Listbox(content_frame)
+        item_listbox.grid(row=0, column=12, columnspan=4 ,rowspan=7,padx= 20)
         def add_order_item():
             selected_product = product_var.get()
             quantity = quantity_entry.get()
@@ -79,12 +95,12 @@ class OrdersWindow(tk.Toplevel):
                 messagebox.showinfo("Success", "Order created successfully!")
 
             
-            self.destroy()
+            content_frame.destroy()
                 
         # Add item button
-        add_item_button = Button(self, text="Add Item", command=add_order_item)
-        add_item_button.grid(row=5, column=0, columnspan=2)
+        add_item_button = Button(content_frame, text="Add Item", command=add_order_item,background="#EAEAF4",borderwidth=1,relief="raised")
+        add_item_button.grid(row=5, column=0, columnspan=2,sticky="ew",pady=6,padx=12)
 
         # Create order button
-        create_order_button = Button(self, text="Create Order", command=create_full_order)
-        create_order_button.grid(row=6, column=0, columnspan=2)
+        create_order_button = Button(content_frame, text="Create Order", command=create_full_order,background="#119DA4",borderwidth=1,relief="raised")
+        create_order_button.grid(row=6, column=0, columnspan=2,sticky="ew",pady=6,padx=12)
