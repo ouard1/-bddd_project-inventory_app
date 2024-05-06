@@ -6,7 +6,7 @@ sys.path.append('../')
 
 import os
 from clients import ClientsWindow
-from tkinter import ttk, CENTER
+from tkinter import ttk, CENTER,Toplevel,Button,Entry,Label
 from suppliers import SuppliersWindow
 from inventoryItems import ItemsWindow
 from logic import analytics
@@ -20,11 +20,13 @@ from orders import OrdersWindow
 from customtkinter import CTk,CTkComboBox,CTkFrame,CTkButton,CTkLabel,CTkCanvas,CTkImage
 from PIL import Image,ImageTk
 
-#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
+
+
+
 class MainWindow(CTk):
     def __init__(self):
         super().__init__()
-
+       
         self.title("Main Window")
         self.geometry("1100x700") 
         style =ttk.Style()
@@ -43,7 +45,7 @@ class MainWindow(CTk):
         for i in range(num_cols):
             self.columnconfigure(i, weight=1, minsize=cell_size)
 
-# Buttons on the sidebar
+       # Buttons on the sidebar
         sidebar_frame =  CTkFrame(self, fg_color="#6665DD")
         sidebar_frame.grid(column=0,columnspan=2,row=0,rowspan=12,sticky='nsew')
 
@@ -56,10 +58,10 @@ class MainWindow(CTk):
          header_frame, text="Home", font=("Arial", 25, "bold"),fg_color='#FAFAFF')
         home_label.pack(side='left',ipadx=30)
 
-        supplier_image = ImageTk.PhotoImage(Image.open("C:/Users/ouarda/Desktop/bddd projet/inventory management system/ui/Image (3).png").resize((20,20)))
-        orders_image =ImageTk.PhotoImage(Image.open("C:/Users/ouarda/Desktop/bddd projet/inventory management system/ui/Image.png").resize((20,20)))
-        clients_image =ImageTk.PhotoImage(Image.open("C:/Users/ouarda/Desktop/bddd projet/inventory management system/ui/Image (5).png").resize((20,21)))
-        items_image =ImageTk.PhotoImage(Image.open("C:/Users/ouarda/Desktop/bddd projet/inventory management system/ui/Image (4).png").resize((20,20)))
+        supplier_image = ImageTk.PhotoImage(Image.open("C:/Users/ouarda/Desktop/bddd projet/inventory management system/ui/media/Image (3).png").resize((20,20)))
+        orders_image =ImageTk.PhotoImage(Image.open("C:/Users/ouarda/Desktop/bddd projet/inventory management system/ui/media/Image.png").resize((20,20)))
+        clients_image =ImageTk.PhotoImage(Image.open("C:/Users/ouarda/Desktop/bddd projet/inventory management system/ui/media/Image (5).png").resize((20,21)))
+        items_image =ImageTk.PhotoImage(Image.open("C:/Users/ouarda/Desktop/bddd projet/inventory management system/ui/media/Image (4).png").resize((20,20)))
     
         suppliers_button = CTkButton(sidebar_frame,image=supplier_image, text="Suppliers", command=self.show_suppliers,hover=False,text_color="#1C1C1C",fg_color='transparent',compound="left",width=83,corner_radius=0,anchor="w",border_spacing=8)
         suppliers_button.grid(row=7 , column=0,columnspan=2,sticky='nsew',padx=40,pady=10)
@@ -79,7 +81,7 @@ class MainWindow(CTk):
 
         num_rows = 2
         num_cols = 2
-        cell_size = 400  # Pixels (adjust based on your desired frame size)
+        cell_size = 400  
         content_frame = CTkFrame(self, fg_color="#EAEAF4")
         content_frame.grid(row=1, column=2, columnspan=11, rowspan=8, sticky='nsew')
         for i in range(num_rows):
@@ -237,6 +239,13 @@ class MainWindow(CTk):
         orders.title("Orders")
         orders.grab_set()
 
+       
+
+
 if __name__ == "__main__":
+   
     app = MainWindow()
+    
+
     app.mainloop()
+

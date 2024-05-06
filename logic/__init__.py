@@ -5,3 +5,4 @@ from . import inventory_items_crud
 from . import orders_crud
 from . import mongodb_database
 from . import analytics
+from . import authentification

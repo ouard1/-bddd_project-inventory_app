@@ -1,8 +1,49 @@
 from pymongo import MongoClient
 from datetime import datetime
-# Connect to MongoDB database
-def connect_to_mongodb():
-    return MongoClient('mongodb+srv://ouarda:02152002@cluster.fgy4xro.mongodb.net/')['inventory']
+import base64
+import bcrypt
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from pymongo import MongoClient
+
+# Encryption/Decryption key generation
+def generate_key(password):
+    salt = b'f'
+    password_bytes = password.encode('utf-8')  # Encode the password to bytes
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        salt=salt,
+        length=32,
+        iterations=100000,
+    )
+    key = base64.urlsafe_b64encode(kdf.derive(password_bytes))
+    return key
+
+
+
+
+def decrypt_url(encrypted_url, key):
+   
+    if isinstance(encrypted_url, bytes):
+        encrypted_url = encrypted_url.decode()
+    f = Fernet(key)
+    decrypted_url = f.decrypt(encrypted_url).decode()
+    return decrypted_url
+
+mongodb_connection = None
+def connect_to_mongodb(decrypted_url):
+  # Establish connection to MongoDB database
+    global mongodb_connection
+    mongodb_connection = MongoClient(decrypted_url)['inventory']
+
+
+
+def get_mongodb_connection():
+    global mongodb_connection
+    return mongodb_connection
+
+
 
 def store_supplier_location(supplier_id, address_with_coordinates):
     # Split the address to extract the address details and coordinates
@@ -20,7 +61,7 @@ def store_supplier_location(supplier_id, address_with_coordinates):
     }
 
     # Connect to MongoDB and insert the document
-    db = connect_to_mongodb()
+    db = get_mongodb_connection()
     supplier_locations_collection = db['supplier_locations']
     supplier_location = {
         "supplier_id": supplier_id,
@@ -52,7 +93,7 @@ def update_supplier_address(supplier_id, new_address):
         coordinates = None
 
     # Connect to MongoDB and access the collection
-    db = connect_to_mongodb()
+    db = get_mongodb_connection()
     supplier_locations_collection = db['supplier_locations']
 
     # Update address and coordinates for the supplier with matching ID
@@ -69,7 +110,7 @@ def update_supplier_address(supplier_id, new_address):
 
   
 def get_supplier_address(supplier_id):
-    db = connect_to_mongodb()
+    db = get_mongodb_connection()
     supplier_locations_collection = db['supplier_locations']
     supplier_location = supplier_locations_collection.find_one({"supplier_id": supplier_id})
     if supplier_location:
@@ -80,7 +121,7 @@ def get_supplier_address(supplier_id):
 
 def get_supplier_coordinates():
     # Connect to MongoDB
-    db = connect_to_mongodb()
+    db = get_mongodb_connection()
     supplier_locations_collection = db['supplier_locations'] 
 
     # Query MongoDB to fetch all documents
@@ -98,14 +139,14 @@ def get_supplier_coordinates():
 
 def insert_analytics(analytics):
     # Store in MongoDB
-        db = connect_to_mongodb()
+        db = get_mongodb_connection()
         collection = db['analytics']
         collection.insert_one(analytics)
       
 
 
 def insert_daily_sales_data(orders_data):
-    mongodb_client = connect_to_mongodb()
+    mongodb_client = get_mongodb_connection()
     sales_collection = mongodb_client['sales_performance']
 
     for order in orders_data:
@@ -135,7 +176,7 @@ def store_low_stock_items(low_stk_items):
     Each day's low stock items are stored as a separate document.
     """
     # Connect to MongoDB
-    db = connect_to_mongodb()
+    db = get_mongodb_connection()
     low_stock_collection = db['low_stock_items']  # Your MongoDB collection
 
     # Get current date
@@ -162,3 +203,11 @@ def store_low_stock_items(low_stk_items):
     low_stock_collection.insert_one(document)
 
     print("Low stock items data stored successfully for today.")
+
+#deleting a supplier
+def delete_supplier_mg(supplier_id):
+    db=get_mongodb_connection()
+    collection=db['supplier_locations']
+    collection.delete_one({'_id': supplier_id})
+        
+    

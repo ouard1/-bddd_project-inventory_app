@@ -1,6 +1,6 @@
 from .mysql_database import connect_to_mysql
 from tkinter import ttk, messagebox
-from .mongodb_database import store_supplier_location,update_supplier_address,get_supplier_address
+from .mongodb_database import store_supplier_location,update_supplier_address,get_supplier_address,delete_supplier_mg
 
 
 def create_supplier(name, contact_person, contact_number, email, address):
@@ -66,6 +66,7 @@ def delete_supplier(supplier_id):
 
         query = "DELETE FROM Suppliers WHERE supplier_id = %s"
         cursor.execute(query, (supplier_id,))
+        delete_supplier_mg(supplier_id)
         return True
     else:
         messagebox.showerror("Error", "Supplier has items in stock .Cannot delete.")
