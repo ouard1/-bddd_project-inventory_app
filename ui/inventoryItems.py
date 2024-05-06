@@ -12,19 +12,24 @@ class ItemsWindow(tk.Toplevel):
         # Configure Treeview style
         style = ttk.Style()
         style.theme_use("default")
+        self.configure(background="#EAEAF4")
+       
         style.configure("Treeview",
                         background="#EAEAF4",
                         foreground="black",
                         rowheight=25,
-                        fieldbackground="#EAEAF4",
+                        fieldbackground="#FAFAFF",
                         show="headings"
+                        
                         )
-        style.map('Treeview', background=[('selected', '#347083')])
+        style.map('Treeview'  , 
+                background=[('selected','#382447')])
+
 
         # Treeview frame and scrollbar
         tree_frame = Frame(self)
         tree_frame.pack(pady=10)
-        tree_scroll = Scrollbar(tree_frame)
+        tree_scroll = Scrollbar(tree_frame,background="#EAEAF4",activebackground="#EAEAF4")
         tree_scroll.pack(side=RIGHT, fill=Y)
 
         # Create Treeview with columns
@@ -54,8 +59,8 @@ class ItemsWindow(tk.Toplevel):
         self.my_tree.heading("Supplier Name", text="Supplier Name", anchor=W)
 
         # Striped row tags (optional)
-        self.my_tree.tag_configure("oddrow", background="white")
-        self.my_tree.tag_configure("evenrow", background="lightblue")
+        self.my_tree.tag_configure("oddrow",background="#FAFAFF")
+        self.my_tree.tag_configure("evenrow",background="#918599")
 
         # Function to load inventory data with supplier information
         def load_inventory(self):
@@ -74,40 +79,40 @@ class ItemsWindow(tk.Toplevel):
             tree_scroll.config(command=self.my_tree.yview)
 
       
-        data_frame =LabelFrame(self,text="Record")
+        data_frame =LabelFrame(self,text="Record",background="#EAEAF4")
         data_frame.pack(fill="x",expand="yes",padx=20)
 
-        in_label =Label(data_frame,text="Item ID")
+        in_label =Label(data_frame,text="Item ID",background="#EAEAF4")
         in_label.grid(row=0,column=0,padx=10 ,pady=10)
         in_entry =Entry(data_frame)
         in_entry.grid(row=0,column=1,padx=10 ,pady=10)
 
-        ln_label =Label(data_frame,text="Name")
+        ln_label =Label(data_frame,text="Name",background="#EAEAF4")
         ln_label.grid(row=0,column=2,padx=10 ,pady=10)
         ln_entry =Entry(data_frame)
         ln_entry.grid(row=0,column=3,padx=10 ,pady=10)
 
-        dd_label =Label(data_frame,text="Description")
+        dd_label =Label(data_frame,text="Description",background="#EAEAF4")
         dd_label.grid(row=0,column=4,padx=10 ,pady=10)
         dd_entry =Entry(data_frame)
         dd_entry.grid(row=0,column=5,padx=10 ,pady=10)
 
-        cn_label =Label(data_frame,text="Category")
+        cn_label =Label(data_frame,text="Category",background="#EAEAF4")
         cn_label.grid(row=1,column=0,padx=10 ,pady=10)
         cn_entry =Entry(data_frame)
         cn_entry.grid(row=1,column=1,padx=10 ,pady=10)
 
-        price_label =Label(data_frame,text="Price")
+        price_label =Label(data_frame,text="Price",background="#EAEAF4")
         price_label.grid(row=1,column=2,padx=10 ,pady=10)
         price_entry =Entry(data_frame)
         price_entry.grid(row=1,column=3,padx=10 ,pady=10)
 
-        quantity_label =Label(data_frame,text="Quantity")
+        quantity_label =Label(data_frame,text="Quantity",background="#EAEAF4")
         quantity_label.grid(row=1,column=4,padx=10 ,pady=10)
         quantity_entry =Entry(data_frame)
         quantity_entry.grid(row=1,column=5,padx=10 ,pady=10)
 
-        sn_label =Label(data_frame,text="Supplier Name")
+        sn_label =Label(data_frame,text="Supplier Name",background="#EAEAF4")
         sn_label.grid(row=2,column=0,padx=10 ,pady=10)
         sn_entry =Entry(data_frame)
         sn_entry.grid(row=2,column=1,padx=10 ,pady=10)
@@ -232,32 +237,30 @@ class ItemsWindow(tk.Toplevel):
             sn_entry.delete(0,END)
 
         #add buttons 
-        button_frame = LabelFrame(self,text="Commands")
+        button_frame = LabelFrame(self,text="Commands",background="#EAEAF4")
         button_frame.pack(fill="x" ,expand="yes" ,padx=20)
 
-        update_button = Button(button_frame,text="update inventory item",command=update_record)
-        update_button.grid(row=0 , column=0 ,padx=10,pady=10)
+        update_button = Button(button_frame,text="update client",command=update_record,background="#EAEAF4")
+        update_button.grid(row=0 , column=0 ,padx=10,pady=10,sticky="ew")
 
-        add_button = Button(button_frame,text="add item",command=create_inventory_item)
-        add_button.grid(row=0 , column=1 ,padx=10,pady=10)
+        add_button = Button(button_frame,text="add client",command=create_inventory_item,background="#EAEAF4")
+        add_button.grid(row=0 , column=1 ,padx=10,pady=10,sticky="ew")
 
-        remove_all_button = Button(button_frame,text="remove all items",command=remove_all)
-        remove_all_button.grid(row=0 , column=2 ,padx=10,pady=10)
+    
+        remove_one_button = Button(button_frame,text="remove selected client",command=remove_one,background="#EAEAF4")
+        remove_one_button.grid(row=0 , column=3 ,padx=10,pady=10,sticky="ew")
 
-        remove_one_button = Button(button_frame,text="remove selected item",command=remove_one)
-        remove_one_button.grid(row=0 , column=3 ,padx=10,pady=10)
+        
+        move_up_button = Button(button_frame,text="move up",command=up,background="#EAEAF4")
+        move_up_button.grid(row=0 , column=5 ,padx=10,pady=10,sticky="ew")
 
-        remove_many_button = Button(button_frame,text="remove many selected",command=remove_many)
-        remove_many_button.grid(row=0 , column=4 ,padx=10,pady=10)
+        move_down_button = Button(button_frame,text="move down",command=down,background="#EAEAF4")
+        move_down_button.grid(row=0 , column=6,padx=10,pady=10,sticky="ew")
 
-        move_up_button = Button(button_frame,text="move up",command=up)
-        move_up_button.grid(row=0 , column=5 ,padx=10,pady=10)
+        select_record_button = Button(button_frame,text="clear",command=clear_entries,background="#EAEAF4")
+        select_record_button.grid(row=0 , column=7 ,padx=10,pady=10,sticky="ew")
 
-        move_down_button = Button(button_frame,text="move down",command=down)
-        move_down_button.grid(row=0 , column=6 ,padx=10,pady=10)
 
-        select_record_button = Button(button_frame,text="clear",command=clear_entries)
-        select_record_button.grid(row=0 , column=7 ,padx=10,pady=10)
 
 
         #bind the tree view 
